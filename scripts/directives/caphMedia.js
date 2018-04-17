@@ -2,50 +2,24 @@ angular.module('caph.media', ['caph.ui'], ['$provide', '$compileProvider', funct
     $compileProvider.directive({
         caphMedia: ['$parse', '$document', function($parse, $document) {
             var CONSTANT = {
-                FORWARD_INTERVAL : 15
+                FORWARD_INTERVAL: 15
             };
-            function invokeMethod(media, index, method, param) {
-                if (angular.isNumber(index)) {
-                    media[index][method].apply(media[index], param);
-                } else {
-                    media.each(function() {
-                        this[method].apply(this, param);
-                    });
-                }
-            }
 
-            function setProperty(media, index, property, value) {
-                if (angular.isNumber(index)) {
-                    media[index][property] = value;
-                } else {
-                    media.each(function() {
-                        this[property] = value;
-                    });
-                }
-            }
-
-            function forEachProperty(media, index, property, callback) {
-                if (angular.isNumber(index)) {
-                    callback(media[index][property]);
-                } else {
-                    media.each(function() {
-                        callback(this[property]);
-                    });
-                }
-            }
-
-            function forEachTextTracks(media, callback, index) {
-                forEachProperty(media, index, 'textTracks', function(textTracks) {
-                    for (var i = 0, length = textTracks.length; i < length; i++) {
-                        callback(textTracks[i]);
-                    }
-                });
-            }
-
-            var document = $document[0], documentElement = document.documentElement;
+            var defaultResolutionWidth = 1920;
+            var document = $document[0],
+                documentElement = document.documentElement;
 
             var isFullScreenEnabled = document.fullscreenEnabled || document.webkitFullscreenEnabled || document.mozFullScreenEnabled || document.msFullscreenEnabled;
             var isFullScreen, requestFullScreen, exitFullScreen;
+
+            var listener = {
+                onevent: function(eventType, eventData) {
+                    console.log("event type: " + eventType + ", data: " + eventData);
+                    ($parse($attrs[$attrs.$normalize('on-' + eventType)]) || angular.noop)($scope, {
+                        $event: event
+                    });
+                }
+            };
 
             if (isFullScreenEnabled) {
                 ['fullscreenElement', 'webkitFullscreenElement', 'mozFullScreenElement', 'msFullscreenElement'].some(function(property) {
@@ -77,15 +51,6 @@ angular.module('caph.media', ['caph.ui'], ['$provide', '$compileProvider', funct
                 controller: function($scope, $element, $attrs, $transclude) {
                     var media;
                     var originalStyle = {};
-                    var isPlaying = false;
-
-                    $scope.$watch($attrs.subtitle, function(subtitle){
-                        if(subtitle === true){
-                            this.subTitle(true);
-                        } else {
-                            this.subTitle(false);
-                        }
-                    }.bind(this));
 
                     function doFullScreen(callback) {
                         if (isFullScreenEnabled) {
@@ -97,32 +62,6 @@ angular.module('caph.media', ['caph.ui'], ['$provide', '$compileProvider', funct
 
                     $transclude(function(clone) {
                         $element.append(clone);
-
-                        /*media = $element.find('video, audio');
-                        media.on('abort error stalled suspend loadstart durationchange loadedmetadata loadeddata progress canplay canplaythrough ended pause play playing ratechange seeked seeking timeupdate volumechange waiting', function(event) {
-                            switch(event.type){
-                                case 'play':
-                                case 'playing':
-                                    isPlaying = true;
-                                    break;
-                                case 'pause':
-                                case 'ended':
-                                    isPlaying = false;
-                                    break;
-                            }
-                            ($parse($attrs[$attrs.$normalize('on-' + event.type)]) || angular.noop)($scope, {$event: event});
-                        });
-
-                        forEachTextTracks(media, function(textTrack) {
-                            textTrack.oncuechange = function(event) {
-                                ($parse($attrs[$attrs.$normalize('on-' + event.type)]) || angular.noop)($scope, {$event: event});
-                            };
-                        });*/
-                        media = $element.find('#av-player');
-                        media.on('bufferingstart bufferingprogress bufferingcomplete currentplaytime streamcompleted', function(event) {
-                        	console.log('avplayer event: ' + event);
-                        	($parse($attrs[$attrs.$normalize('on-' + event.type)]) || angular.noop)($scope, {$event: event});
-                        });
                     });
 
                     $scope.$on('$destroy', function() {
@@ -141,66 +80,54 @@ angular.module('caph.media', ['caph.ui'], ['$provide', '$compileProvider', funct
                         }
                     });
 
-                    /*['load', 'play', 'pause'].forEach(function(method) {
-                        this[method] = function(index) {
-                            invokeMethod(media, index, method);
-                        }
-                    }, this);*/
-                    ['open', 'close', 'prepare', 'prepareAsync', 'play', 'stop', 'pause'].forEach(function(method) {
-                        this[method] = function(index) {
-                            invokeMethod(media, index, method);
-                        }
-                    }, this);
+                    this.togglePlay = function() {
+                        var state = webapis.avplay.getState();
+                        if (state === 'NONE') {
+                            this.preparePlayer();
+                        } 
 
-                    this.togglePlay = function(index){
-                        var methodType = isPlaying ? 'pause' : 'play';
-                        invokeMethod(media, index, methodType);
-                    };
-                    this.restart = function(index){
-                        setProperty(media, index, 'currentTime', 0);
-                    };
-                    this.rewind = function(index){
-                        if (angular.isNumber(index)) {
-                            setProperty(media, index, 'currentTime', media[index].currentTime - CONSTANT.FORWARD_INTERVAL);
+                        var state = webapis.avplay.getState();
+                        var isPlaying = false;
+                        if (state === 'IDLE') {
+                            webapis.avplay.prepare();
+                            webapis.avplay.play();
+                            isPlaying = true;
+                        } else if (state === 'PLAYING') {
+                            webapis.avplay.pause();
+                        } else if (state === 'PAUSED') {
+                            webapis.avplay.play();
+                            isPlaying = true;
+                        }
+                        
+                        if (isPlaying) {
+                        	($parse($attrs[$attrs.$normalize('on-play')]) || angular.noop)($scope, {$event: event});
                         } else {
-                            media.each(function(i) {
-                                setProperty(media, i, 'currentTime', media[i].currentTime - CONSTANT.FORWARD_INTERVAL);
-                            });
+                        	($parse($attrs[$attrs.$normalize('on-pause')]) || angular.noop)($scope, {$event: event});
                         }
                     };
-                    this.forward = function(index){
-                        if (angular.isNumber(index)) {
-                            setProperty(media, index, 'currentTime', media[index].currentTime + CONSTANT.FORWARD_INTERVAL);
-                        } else {
-                            media.each(function(i) {
-                                setProperty(media, i, 'currentTime', media[i].currentTime + CONSTANT.FORWARD_INTERVAL);
-                            });
-                        }
-                    };
-                    this.next = function(index){
-                        if (angular.isNumber(index)) {
-                            setProperty(media, index, 'currentTime', media[index].duration);
-                        } else {
-                            media.each(function(i) {
-                                setProperty(media, i, 'currentTime', media[i].duration);
-                            });
-                        }
-                    };
+                    
+                    this.pause = function() {
+                    	webapis.avplay.pause();
+                    }
 
-                    /*['autoplay', 'controls', 'currentTime', 'loop', 'mediaGroup', 'muted', 'playbackRate', 'preload', 'src', 'volume'].forEach(function(property) {
-                        this[$attrs.$normalize('set-' + property)] = function(value, index) {
-                            setProperty(media, index, property, value);
-                        }
-                    }, this);*/
+                    this.preparePlayer = function() {
+                        var resolutionWidth = $scope.resolutionWidth;
 
-                    this.subTitle = function(show, language, index) {
-                        forEachTextTracks(media, function(textTrack) {
-                            if (show && (!language || language === textTrack.language)) {
-                                textTrack.mode = 'showing';
-                            } else {
-                                textTrack.mode = 'hidden';
-                            }
-                        }, index);
+                        var playerCoords = {
+                            x: Math.floor(0 * resolutionWidth / defaultResolutionWidth),
+                            y: Math.floor(0 * resolutionWidth / defaultResolutionWidth),
+                            width: Math.floor(1920 * resolutionWidth / defaultResolutionWidth),
+                            height: Math.floor(1080 * resolutionWidth / defaultResolutionWidth)
+                        };
+
+                        webapis.avplay.open($scope.streamSource);
+                        webapis.avplay.setDisplayRect(
+                            playerCoords.x,
+                            playerCoords.y,
+                            playerCoords.width,
+                            playerCoords.height
+                        );
+                        webapis.avplay.setListener(listener);
                     };
 
                     this.requestFullScreen = function() {

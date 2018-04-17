@@ -486,7 +486,7 @@ body {
     margin: 0 auto;
     position: absolute;
     left: 0;
-    bottom: 120px;
+    bottom: 0;
 }
 
 .player .controls-bar .setting-panel {
@@ -513,7 +513,6 @@ body {
 .player .controls-bar .operations {
     width: 900px;
     height: 128px;
-    margin: 0 auto;
     background-color: rgba(128, 128, 128, .25); /*#808080; opacity: .25;*/
     margin: 0 auto;
 }
@@ -550,9 +549,9 @@ body {
     position: relative;
     width: 180px;
     height: 128px;
-    display: table-cell;
     vertical-align: middle;
     border-radius: 15px;
+    margin: 0 auto;
 }
 .btn-player-setting {
     position: relative;

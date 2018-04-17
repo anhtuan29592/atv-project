@@ -50,7 +50,8 @@ app
                             size: '268x268',
                             url: 'images/chanels/vtv1.jpg'
                         }],
-                        color: 'rgba(255, 255, 255, .3)'
+                        color: 'rgba(255, 255, 255, .3)',
+                        source: 'http://27.67.50.6:18080/71.m3u8?AdaptiveType=HLS&VOD_RequestID=U6tIRX+QtmFBXhLTgqa7ueyBtmHx5QAI3mRpdZ2Q7ux7K53vZQMpmfIQhMqTkuSfwmjwlKwMPbiALKNBVRv5yw=='
                     }, {
                         description: 'Khoa h&#7885;c gi&aacute;o d&#7909;c',
                         id: 'vtv2',
@@ -59,7 +60,8 @@ app
                             size: '268x268',
                             url: 'images/chanels/vtv2.jpg'
                         }],
-                        color: 'rgba(255, 255, 255, .3)'
+                        color: 'rgba(255, 255, 255, .3)',
+                        source: 'http://27.67.50.6:18080/71.m3u8?AdaptiveType=HLS&VOD_RequestID=U6tIRX+QtmFBXhLTgqa7ueyBtmHx5QAI3mRpdZ2Q7ux7K53vZQMpmfIQhMqTkuSfpz36Fe79xublCbnsklQtqg=='
                     }, {
                         description: 'Th&#7875; thao gi&#7843;i tr&iacute;',
                         id: 'vtv3',
@@ -68,7 +70,8 @@ app
                             size: '268x268',
                             url: 'images/chanels/vtv3.jpg'
                         }],
-                        color: 'rgba(255, 255, 255, .3)'
+                        color: 'rgba(255, 255, 255, .3)',
+                        source: 'http://27.67.50.6:18080/71.m3u8?AdaptiveType=HLS&VOD_RequestID=U6tIRX+QtmFBXhLTgqa7ueyBtmHx5QAI3mRpdZ2Q7ux7K53vZQMpmfIQhMqTkuSfpz36Fe79xublCbnsklQtqg=='
                     }]
                 }
             };

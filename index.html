@@ -24,7 +24,7 @@
     <script type="text/javascript" src="scripts/directives/list.js"></script>
     <script type="text/javascript" src="scripts/directives/caphMedia.js"></script>
     <script type="text/javascript" src="scripts/utils/constant.js"></script>
-
+    <script type="text/javascript" src="scripts/utils/videoPlayer.js"></script>
 
 
 </head>
@@ -51,20 +51,8 @@
         <caph-media-controls class="controls-bar" ng-class="{'fade-out': !showMediaController}" ng-mouseover="setMediaControllerTimer()">
             <div class="opacity-panel">
                 <div class="operations">
-                    <div focusable="{depth: DEPTH.PLAYER, name: 'btnPlayerRestart'}" class="btn-player" on-selected="controls.restart()">
-                        <div class="btn-icon-player icon-caph icon-caph-prev"></div>
-                    </div>
-                    <div focusable="{depth: DEPTH.PLAYER, name: 'btnPlayerRewind'}" class="btn-player" on-selected="controls.rewind()">
-                        <div class="btn-icon-player icon-caph icon-caph-rewind"></div>
-                    </div>
                     <div focusable="{depth: DEPTH.PLAYER, name: 'btnPlayerPlay', initialFocus: true}" class="btn-player" on-selected="controls.togglePlay()">
                         <div class="btn-icon-player icon-caph" ng-class="{'icon-caph-pause': isPlaying, 'icon-caph-play': !isPlaying}"></div>
-                    </div>
-                    <div focusable="{depth: DEPTH.PLAYER, name: 'btnForward'}" class="btn-player" on-selected="controls.forward()">
-                        <div class="btn-icon-player icon-caph icon-caph-forward"></div>
-                    </div>
-                    <div focusable="{depth: DEPTH.PLAYER, name: 'btnPlayerNext'}" class="btn-player" on-selected="controls.next()">
-                        <div class="btn-icon-player icon-caph icon-caph-next"></div>
                     </div>
                 </div>
             </div>
