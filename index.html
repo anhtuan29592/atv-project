@@ -3,66 +3,35 @@
 
 <head>
     <meta charset="utf-8">
-    <title>CAPH, For High performance web app.</title>
+    <title>NetTV</title>
     <link href="lib/caph/3.1.0/bower_components/caph.min.css" rel="stylesheet" type="text/stylesheet">
     <link rel="stylesheet" href="styles/main.css">
 
     <!-- Include js file for popular js libraries  -->
     <script type="text/javascript" src="lib/caph/3.1.0/bower_components/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="lib/caph/3.1.0/bower_components/angular/angular.min.js"></script>
-    <script type="text/javascript" src="lib/caph/3.1.0/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
+    <script type="text/javascript" src="lib/caph/3.1.0/bower_components/angular/angular.js"></script>
+    <script type="text/javascript" src="lib/caph/3.1.0/bower_components/angular-sanitize/angular-sanitize.js"></script>
+    <script type="text/javascript" src="lib/caph/3.1.0/bower_components/angular-route/angular-route.js"></script>
     <script type="text/javascript" src="lib/caph/3.1.0/caph-angular.min.js"></script>
     <script type='text/javascript' src='$WEBAPIS/webapis/webapis.js'></script>
 
     <!--Include js file for Touch Event -->
-    <script type="text/javascript" src="lib/caph/3.1.0/bower_components/hammerjs/hammer.min.js"></script>
+    <script type="text/javascript" src="lib/caph/3.1.0/bower_components/hammerjs/hammer.js"></script>
 
 
     <!-- Include js file for app -->
     <script type="text/javascript" src="scripts/app.js"></script>
-    <script type="text/javascript" src="scripts/controller.js"></script>
+    <script type="text/javascript" src="scripts/controllers/mainController.js"></script>
+    <script type="text/javascript" src="scripts/controllers/homeController.js"></script>
     <script type="text/javascript" src="scripts/directives/list.js"></script>
     <script type="text/javascript" src="scripts/directives/caphMedia.js"></script>
     <script type="text/javascript" src="scripts/utils/constant.js"></script>
     <script type="text/javascript" src="scripts/utils/videoPlayer.js"></script>
-
-
 </head>
 
-<body ng-controller="controller">
+<body ng-controller="mainController">
 
-    <!-- Welcome : It will disappear when '$scope.isInitCompleted' become 'false'. -->
-    <div class="welcome" ng-class="{'fade-out': isInitCompleted}">
-        <span class="caph">ATV</span>
-    </div>
-
-    <div class="wrapper" ng-style="{'border-color': overview.color}" ng-include="'views/main.html'"></div>
-
-    <!-- Video Player : It will be shown when '$scope.currentDepth' become 'DEPTH.PLAYER'. -->
-    <caph-media ng-show="currentDepth === DEPTH.PLAYER" id="player" class="player" subtitle="setting.subTitle" on-play="toggleIsPlaying(true)" on-pause="toggleIsPlaying(false)" on-ended="toggleIsPlaying(false)">
-        <!-- <video style="width:100%">
-            Put your video file address into 'src' property in 'source' tag.
-            <source src="" type="application/x-mpegURL"></source>
-            Put your sub-title file address into 'src' property in 'track' tag.
-            <track src="SubTitleAddress" label="English subtitles" kind="subtitles" srclang="en"></track> 
-        </video> -->
-        <object id='av-player' type='application/avplayer'></object>
-        
-        <caph-media-controls class="controls-bar" ng-class="{'fade-out': !showMediaController}" ng-mouseover="setMediaControllerTimer()">
-            <div class="opacity-panel">
-                <div class="operations">
-                    <div focusable="{depth: DEPTH.PLAYER, name: 'btnPlayerPlay', initialFocus: true}" class="btn-player" on-selected="controls.togglePlay()">
-                        <div class="btn-icon-player icon-caph" ng-class="{'icon-caph-pause': isPlaying, 'icon-caph-play': !isPlaying}"></div>
-                    </div>
-                </div>
-            </div>
-            <div class="setting-panel">
-                <div focusable="{depth: DEPTH.PLAYER, name: 'btnPlayerReturn'}" class="btn-player-setting" on-selected="back()">
-                    <div class="btn-icon-player-setting icon-caph icon-caph-return"></div>
-                </div>
-            </div>
-        </caph-media-controls>
-    </caph-media>
+    <div class="wrapper" ng-view></div>
 
     <!-- Setting dialog : It will be shown when the 'setting' button is clicked by user. -->
     <caph-dialog focus-option="setting.focusOption" center="true" show="setting.show" style="width:800px;">
