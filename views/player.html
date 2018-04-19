@@ -1,9 +1,9 @@
-<caph-media ng-show="currentDepth === DEPTH.PLAYER" id="player" class="player" subtitle="setting.subTitle" on-play="toggleIsPlaying(true)" on-pause="toggleIsPlaying(false)" on-ended="toggleIsPlaying(false)">
+<caph-media id="player" class="player" subtitle="setting.subTitle" on-play="toggleIsPlaying(true)" on-pause="toggleIsPlaying(false)" on-ended="toggleIsPlaying(false)">
     <object id='av-player' type='application/avplayer'></object>
-    <caph-media-controls class="controls-bar" ng-class="{'fade-out': !showMediaController}" ng-mouseover="setMediaControllerTimer()">
+    <caph-media-controls control="mediaControls" class="controls-bar" ng-class="{'fade-out': !showMediaController}" ng-mouseover="setMediaControllerTimer()">
         <div class="opacity-panel">
             <div class="operations">
-                <div focusable="{depth: DEPTH.PLAYER, name: 'btnPlayerPlay', initialFocus: true}" class="btn-player" on-selected="controls.togglePlay()">
+                <div class="btn-player" on-selected="mediaControls.togglePlay()">
                     <div class="btn-icon-player icon-caph" ng-class="{'icon-caph-pause': isPlaying, 'icon-caph-play': !isPlaying}"></div>
                 </div>
             </div>

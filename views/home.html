@@ -2,27 +2,23 @@
     <div class="logo"></div>
     <div class="top-right-area">
         <!-- It will be shown when '$scope.currentDepth' become 'DEPTH.INDEX'. -->
-        <div focusable="{depth: DEPTH.INDEX}" class="btn btn-gap btn-setting" ng-show="currentDepth === DEPTH.INDEX" on-focused="buttonFocusInDetail($event, $originalEvent)" on-selected="setting.show=true">
+        <div class="btn btn-gap btn-setting" on-focused="buttonFocusInDetail($event, $originalEvent)" on-selected="setting.show=true">
             <div class="btn-icon icon-caph icon-caph-setting"></div>
         </div>
         <!-- It will be shown when '$scope.currentDepth' become 'DEPTH.DETAIL'. -->
-        <div focusable="{depth: DEPTH.DETAIL, nextFocus: {down: 'btnPlay'}}" class="btn btn-gap btn-return" ng-show="currentDepth === DEPTH.DETAIL" on-focused="buttonFocusInDetail($event, $originalEvent)" on-selected="back()">
+        <div class="btn btn-gap btn-return" on-focused="buttonFocusInDetail($event, $originalEvent)" on-selected="back()">
             <div class="btn-icon icon-caph icon-caph-return"></div>
         </div>
     </div>
-    <!-- OVERVIEW -->
     <div class="overview">
         <div class="font-header" ng-style="{'color': overview.color}" ng-bind-html="overview.name"></div>
     </div>
-
-    <!-- page: INDEX (OVERVIEW) -->
-    <div class="page" ng-class="{'page-fade-in': currentDepth === DEPTH.INDEX}" ng-hide="currentDepth === DEPTH.PLAYER">
-        <div class="overview desc font-body" ng-bind-html="overview.description"></div>
+    <div class="page" ">
+        <div class="overview desc font-body " ng-bind-html="overview.description "></div>
     </div>
 </div>
-<!-- page: INDEX (LIST) -->
-<div class="list-wrapper page" ng-class="{'page-fade-in': currentDepth === DEPTH.INDEX}" ng-hide="currentDepth === DEPTH.PLAYER">
-    <div id="list-category" class="list-category">
-        <play-list id="{{CATEGORY.GENERAL}}" title="Ph&#7893; bi&#7871;n"></play-list>
+<div class="list-wrapper page ">
+    <div id="list-category " class="list-category ">
+        <play-list id="{{CATEGORY.GENERAL}} " title="Ph&#7893; bi&#7871;n "></play-list>
     </div>
 </div>

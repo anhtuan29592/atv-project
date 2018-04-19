@@ -1,14 +1,17 @@
 'use strict';
 
-app.controller('mainController', ['$scope', '$timeout', '$location', 'CONSTANT', function($scope, $timeout, $location, CONSTANT) {
+app.controller('loadingController', ['$scope', '$timeout', '$location', 'CONSTANT', function($scope, $timeout, $location, CONSTANT) {
 
     /* CONSTANT values definition */
     $scope.CATEGORY = CONSTANT.CATEGORY;
-    $scope.DEPTH = {
-        INDEX: 1,
-        PLAYER: 2,
-        SETTING: 3
-    };
+//    $scope.DEPTH = {
+//        INDEX: 1,
+//        PLAYER: 2,
+//        SETTING: 3
+//    };
+    
+    var items = CONSTANT.ITEMS;
+    $scope.dataCategory = [items, items, items, items];
 
     $scope.$on('$viewContentLoaded', function() {
         updateCategoryListData(CONSTANT.PREPARED_DATA.GENERAL, $scope.CATEGORY.GENERAL, true);
@@ -24,13 +27,16 @@ app.controller('mainController', ['$scope', '$timeout', '$location', 'CONSTANT',
     // Update and reload data for each list component.
     function updateCategoryListData(response, category, reload) {
         $scope.dataCategory[category] = response;
+        $timeout(function() {
+            reload && $('#list-' + category).trigger('reload');
+        }, 0);
     };
 
     $scope.setting = {
         show: false,
         center: true,
         focusOption: {
-            depth: $scope.DEPTH.SETTING
+            depth: 3
         },
         onSelectButton: function(buttonIndex, $event) {
             $scope.setting.show = false;

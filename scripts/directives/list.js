@@ -7,7 +7,6 @@ var linkFn = function ($scope, $element, $attr) {
         depth: 1,
         group: $attr.id
     });
-    console.log($scope.dataCategory);
 };
 
 app.directive('playList', function(){

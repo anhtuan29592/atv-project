@@ -80,38 +80,41 @@ angular.module('caph.media', ['caph.ui'], ['$provide', '$compileProvider', funct
                         }
                     });
 
-                    this.togglePlay = function() {
+                    this.play = function() {
                         var state = webapis.avplay.getState();
-                        if (state === 'NONE') {
-                            this.preparePlayer();
-                        } 
-
-                        var state = webapis.avplay.getState();
-                        var isPlaying = false;
                         if (state === 'IDLE') {
                             webapis.avplay.prepare();
                             webapis.avplay.play();
-                            isPlaying = true;
-                        } else if (state === 'PLAYING') {
-                            webapis.avplay.pause();
                         } else if (state === 'PAUSED') {
                             webapis.avplay.play();
-                            isPlaying = true;
                         }
-                        
-                        if (isPlaying) {
-                        	($parse($attrs[$attrs.$normalize('on-play')]) || angular.noop)($scope, {$event: event});
-                        } else {
-                        	($parse($attrs[$attrs.$normalize('on-pause')]) || angular.noop)($scope, {$event: event});
-                        }
+
+                        ($parse($attrs[$attrs.$normalize('on-play')]) || angular.noop)($scope, {
+                            $event: event
+                        });
                     };
-                    
+
                     this.pause = function() {
-                    	webapis.avplay.pause();
+                        var state = webapis.avplay.getState();
+                        if (state === 'PLAYING') {
+                            webapis.avplay.pause();
+                            ($parse($attrs[$attrs.$normalize('on-pause')]) || angular.noop)($scope, {
+                                $event: event
+                            });
+                        }
                     }
 
-                    this.preparePlayer = function() {
-                        var resolutionWidth = $scope.resolutionWidth;
+                    this.tooglePlay = function() {
+                        var state = webapis.avplay.getState();
+                        if (state === 'IDLE' || state === 'PAUSED') {
+                            this.play();
+                        } else if (state === 'PLAYING') {
+                            this.pause();
+                        }
+                    };
+
+                    this.preparePlayer = function(configs) {
+                        var resolutionWidth = configs.resolutionWidth;
 
                         var playerCoords = {
                             x: Math.floor(0 * resolutionWidth / defaultResolutionWidth),
@@ -120,7 +123,7 @@ angular.module('caph.media', ['caph.ui'], ['$provide', '$compileProvider', funct
                             height: Math.floor(1080 * resolutionWidth / defaultResolutionWidth)
                         };
 
-                        webapis.avplay.open($scope.streamSource);
+                        webapis.avplay.open(configs.url);
                         webapis.avplay.setDisplayRect(
                             playerCoords.x,
                             playerCoords.y,
@@ -129,6 +132,20 @@ angular.module('caph.media', ['caph.ui'], ['$provide', '$compileProvider', funct
                         );
                         webapis.avplay.setListener(listener);
                     };
+
+                    this.close = function() {
+                        var state = webapis.avplay.getState();
+                        if (state === 'IDLE') {
+                            webapis.avplay.close();
+                        }
+                    }
+
+                    this.stop = function() {
+                        var state = webapis.avplay.getState();
+                        if (state === 'PLAYING') {
+                            webapis.avplay.stop();
+                        }
+                    }
 
                     this.requestFullScreen = function() {
                         doFullScreen(function(element) {
@@ -165,8 +182,50 @@ angular.module('caph.media', ['caph.ui'], ['$provide', '$compileProvider', funct
                 restrict: 'E',
                 require: '^caphMedia',
                 transclude: true,
+                scope: {
+                    control: '='
+                },
                 link: function($scope, $element, $attrs, controller, $transclude) {
-                    $scope.controls = controller;
+                    $scope.control.preparePlayer = function(configs) {
+                    	controller.preparePlayer(configs);
+                    };
+
+                    $scope.control.play = function() {
+                        controller.play();
+                    };
+
+                    $scope.control.pause = function() {
+                        controller.pause();
+                    };
+
+                    $scope.control.tooglePlay = function() {
+                        controller.tooglePlay();
+                    };
+
+                    $scope.control.close = function() {
+                        controller.close();
+                    };
+
+                    $scope.control.stop = function() {
+                        controller.stop();
+                    };
+
+                    $scope.control.requestFullScreen = function() {
+                        controller.requestFullScreen();
+                    };
+
+                    $scope.control.exitFullScreen = function() {
+                        controller.exitFullScreen();
+                    };
+
+                    $scope.control.isFullScreen = function() {
+                        return controller.isFullScreen();
+                    };
+
+                    $scope.control.toggleFullScreen = function() {
+                        controller.toggleFullScreen();
+                    };
+
                     $transclude(function(clone) {
                         $element.append(clone);
                     });
